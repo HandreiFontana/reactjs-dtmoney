@@ -54,7 +54,7 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     button {
-        cursor: ponteir;
+        cursor: pointer;
     }
 
     [disabled] {
