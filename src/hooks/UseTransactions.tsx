@@ -1,6 +1,6 @@
-import { createContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useEffect, useState, ReactNode, useContext, SetStateAction } from 'react';
 
-import { api } from './services/api';
+import { api } from '../services/api';
 
 interface Transaction {
     id: number;
@@ -22,7 +22,7 @@ interface TransactionsContextData {
     createTransaction: (transaction: TransactionInput) => Promise<void>;
 }
 
-export const TransactionsContext = createContext<TransactionsContextData>(
+const TransactionsContext = createContext<TransactionsContextData>(
     {} as TransactionsContextData // Jeito de tirar o erro!
 );
 
@@ -31,7 +31,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
 
     useEffect(() => {
         api.get('/transactions')
-            .then(response => setTransactions(response.data.transactions))
+            .then((response: { data: { transactions: SetStateAction<Transaction[]>; }; }) => setTransactions(response.data.transactions))
     }, []);
 
     async function createTransaction(transactionInput: TransactionInput) {
@@ -53,4 +53,10 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
             {children}
         </TransactionsContext.Provider>
     );
+}
+
+export function useTransactions() {
+    const context = useContext(TransactionsContext);
+
+    return context;
 }
